@@ -1,0 +1,93 @@
+.logged_in_hotel {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.logged_in_hotel img {
+  max-width: 80px;
+  max-height: 80px;
+  border-radius: 100%;
+}
+
+.logged-right {
+  margin-left: 10px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: white;
+}
+
+.wallet-balance-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wallet-card {
+  background-color: #0083fd;
+  border-radius: 20px;
+  padding: 10px;
+  width: 700px;
+  max-width: 100%;
+}
+
+.wallet-card-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: white;
+}
+
+.wallet-top-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wallet-top-right img {
+  max-width: 35px;
+}
+
+.wallet-card-center {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  color: white;
+}
+
+.wallet-card-center h3 {
+  font-size: 30px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.wallet-card-center img {
+  max-width: 50px;
+  max-height: 50px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.wallet-card-bottom {
+  margin-top: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.w-c-b-b{
+    width: 100px;
+    height: 50px;
+    margin-left: 10px;
+    background-color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #0083fd;
+}
+.w-c-b-b img{
+max-width: 30px;
+}

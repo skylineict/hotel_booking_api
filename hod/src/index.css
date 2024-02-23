@@ -1,0 +1,17 @@
+*{
+  margin: 0;
+  box-sizing: border-box;
+}
+
+
+:root{
+  --body-color:#0B1B34;
+  --button-color:#03D47C;
+}
+
+
+
+
+body{
+  background-color: var(--body-color);
+}
