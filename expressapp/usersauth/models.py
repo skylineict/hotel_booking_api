@@ -9,8 +9,6 @@ from .usermanager import CustomUsermanager
 from .utils import generate_username
 
 
-
-
 class CustomUser(AbstractBaseUser):
     """
     Custom user model representing a user in the system.
