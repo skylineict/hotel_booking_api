@@ -1,20 +1,28 @@
 """ This module contains the views for the usersauth app. """
 
-import datetime
-from django.contrib.auth import login, authenticate
+from django.utils import timezone
+from django.contrib.auth import authenticate
 from django.core.mail import send_mail
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, renderer_classes
-from rest_framework.renderers import JSONRenderer
-from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status, permissions
 from .serializers import CustomUserSerializer
 from .models import CustomUser
 from .utils import generate_otp
+from hotel_booking.models import HotelBooking
+from apartment_booking.models import ApartmentBooking
+from hotel_booking.serializers import HotelBookingSerializer
+from apartment_booking.serializers import ApartmentBookingSerializer
 
 
 @api_view(("POST",))
-@renderer_classes((JSONRenderer,))
-def user_signup(request):
+@permission_classes([])
+def user_signup(
+    request,
+):
     """
     API endpoint for user signup.
 
@@ -27,17 +35,17 @@ def user_signup(request):
     serializer = CustomUserSerializer(data=request.data)
     if serializer.is_valid():
         otp = generate_otp()
-        otp_expiry = datetime.datetime.now() + datetime.timedelta(minutes=30)
+        otp_expiry = timezone.now() + timezone.timedelta(minutes=30)
         serializer.validated_data["otp"] = otp
         serializer.validated_data["otp_expiry"] = otp_expiry
+        serializer.save()
         send_mail(
             "JE Express Account Activation",
-            "Your OTP is 123345. Use it to activate your account.",
+            f"Your OTP is {otp}. Use it to activate your account.",
             None,
-            ["destinedcodes@gmail.com"],
+            [request.data["email"]],
             fail_silently=False,
         )
-        serializer.save()
         return Response(
             {
                 "message": "User signup success!, OTP sent to your email.",
@@ -50,8 +58,9 @@ def user_signup(request):
         status=status.HTTP_400_BAD_REQUEST,
     )
 
+
 @api_view(("POST",))
-@renderer_classes((JSONRenderer,))
+@permission_classes([])
 def activate_account(request):
     """API endpoint for account activation."""
     email = request.data.get("email")
@@ -82,7 +91,7 @@ def activate_account(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    if user.otp_expiry < datetime.datetime.now():
+    if user.otp_expiry < timezone.now():
         return Response(
             {"message": "OTP has expired!"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -95,8 +104,9 @@ def activate_account(request):
         status=status.HTTP_200_OK,
     )
 
+
 @api_view(("POST",))
-@renderer_classes((JSONRenderer,))
+@permission_classes([])
 def resend_otp(request):
     """API endpoint for resending OTP."""
     email = request.data.get("email")
@@ -116,7 +126,7 @@ def resend_otp(request):
         )
 
     otp = generate_otp()
-    otp_expiry = datetime.datetime.now() + datetime.timedelta(minutes=30)
+    otp_expiry = timezone.now() + timezone.timedelta(minutes=30)
     user.otp = otp
     user.otp_expiry = otp_expiry
     send_mail(
@@ -133,8 +143,9 @@ def resend_otp(request):
         status=status.HTTP_200_OK,
     )
 
+
 @api_view(("POST",))
-@renderer_classes((JSONRenderer,))
+@permission_classes([])
 def user_login(request):
     """API endpoint for user login."""
     email = request.data.get("email")
@@ -159,21 +170,72 @@ def user_login(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    if not user.is_active:
+        return Response(
+            {"message": "Account is not activated!"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     authenticated_user = authenticate(email=email, password=password)
 
     if authenticated_user is not None:
-        # check if the user is active
         if not authenticated_user.is_active:
             return Response(
                 {"message": "Account is not activated!"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        login(request, authenticated_user)
+        refresh = RefreshToken.for_user(authenticated_user)
         return Response(
-            {"message": "Login success!"},
+            {
+                "message": "Login successful!",
+                "data": {
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                },
+            },
             status=status.HTTP_200_OK,
         )
     return Response(
         {"message": "Invalid credentials!"},
         status=status.HTTP_400_BAD_REQUEST,
     )
+
+
+class ListHotelBooking(APIView):
+    """
+    View to list all bookings in the system.
+
+    - Requires token authentication.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """List all bookings."""
+        user = request.data.get("user")
+        if user is None:
+            user = request.user
+
+        bookings = HotelBooking.objects.filter(user=user.id)
+        serializer = HotelBookingSerializer(bookings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ListApartmentBooking(APIView):
+    """
+    View to list all bookings in the system.
+
+    - Requires token authentication.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """List all bookings."""
+        user = request.data.get("user")
+        if user is None:
+            user = request.user
+
+        bookings = ApartmentBooking.objects.filter(user=user.id)
+        serializer = ApartmentBookingSerializer(bookings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -14,9 +14,37 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.urls import path, include
 from usersauth import urls as userauth_urls
+from hotel import urls as hotel_urls
+from apartment import urls as apartment_urls
+from hotel_booking import urls as hotel_booking_urls
+from apartment_booking import urls as apartment_booking_urls
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="My API",
+        default_version='v1',
+        description="My API description",
+        terms_of_service="https://www.example.com/terms/",
+        contact=openapi.Contact(email="contact@example.com"),
+        license=openapi.License(name="Awesome License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
 
 urlpatterns = [
-    path("", include(userauth_urls)),
+    path("user/", include(userauth_urls)),
+    path("hotel/", include(hotel_urls)),
+    path("apartment/", include(apartment_urls)),
+    path("hotel-booking/", include(hotel_booking_urls)),
+    path("apartment-booking/", include(apartment_booking_urls)),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

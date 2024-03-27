@@ -27,6 +27,7 @@ class CustomUser(AbstractBaseUser):
     phone = models.CharField(
         _("phone number"), unique=True, null=True, blank=True, max_length=15
     )
+    is_vendor = models.BooleanField(_("vendor"), default=False)
     otp = models.CharField(_("otp"), max_length=6, null=True, blank=True)
     otp_expiry = models.DateTimeField(_("otp expiry"), null=True, blank=True)
     is_active = models.BooleanField(_("active"), default=False)
