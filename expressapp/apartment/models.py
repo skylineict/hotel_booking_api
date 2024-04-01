@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from shortuuid.django_fields import ShortUUIDField
 
-from usersauth.models import CustomUser
+from usersauth.models import User
 
 
 class Apartment(models.Model):
@@ -20,7 +20,7 @@ class Apartment(models.Model):
         primary_key=True,
     )
     agent = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="apartments"
+        User, on_delete=models.CASCADE, related_name="apartments"
     )
     name = models.CharField(max_length=255)
     description = models.TextField()

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework import status
-from .serializers import CustomUserSerializer
+from .serializers import UserSerializer
 from .utils import generate_otp
 from django.urls import path
 
@@ -23,7 +23,7 @@ def vendor_signup(request):
     Returns:
         Response: The response object.
     """
-    serializer = CustomUserSerializer(data=request.data)
+    serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
         otp = generate_otp()
         otp_expiry = datetime.datetime.now() + datetime.timedelta(minutes=5)

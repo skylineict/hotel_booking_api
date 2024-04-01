@@ -2,7 +2,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from shortuuid.django_fields import ShortUUIDField
-from usersauth.models import CustomUser
+from usersauth.models import User
 
 
 class HotelBooking(models.Model):
@@ -26,7 +26,7 @@ class HotelBooking(models.Model):
         "hotel.Hotel", on_delete=models.CASCADE, related_name="hotel_bookings"
     )
     user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="hotel_bookings"
+        User, on_delete=models.CASCADE, related_name="hotel_bookings"
     )
     salutation = models.CharField(max_length=10)
     full_name = models.CharField(max_length=255)

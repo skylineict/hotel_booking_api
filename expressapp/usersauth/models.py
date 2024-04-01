@@ -4,36 +4,43 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from shortuuid.django_fields import ShortUUIDField
 
-from .usermanager import CustomUsermanager
-from .utils import generate_username
+from .usermanager import Usermanager
 
 
-class CustomUser(AbstractBaseUser):
+class User(AbstractBaseUser):
     """
-    Custom user model representing a user in the system.
+    User model representing a user in the system.
     """
 
-    id = models.CharField(
+    id = ShortUUIDField(
+        unique=True,
         primary_key=True,
-        max_length=12,
+        max_length=20,
+        alphabet="abcdefghijklmnopqrstuvwxyz0123456789",
+        prefix="usr-",
         editable=False,
-        default=generate_username,
+    )
+    firstname = models.CharField(_("first name"), max_length=50, null=True, blank=True)
+    lastname = models.CharField(_("last name"), max_length=50, null=True, blank=True)
+    username = models.CharField(
+        _("username"), unique=True, max_length=20, null=True, blank=True
     )
     email = models.EmailField(_("email address"), unique=True)
-    username = models.CharField(
-        _("username"), unique=True, null=True, blank=True, max_length=100
-    )
     phone = models.CharField(
         _("phone number"), unique=True, null=True, blank=True, max_length=15
     )
-    is_vendor = models.BooleanField(_("vendor"), default=False)
+    dob = models.DateField(
+        _("date of birth"), null=True, blank=True
+    )
+    is_vendor = models.BooleanField(_("vendor"), default=True)
+    is_active = models.BooleanField(_("active"), default=False)
     otp = models.CharField(_("otp"), max_length=6, null=True, blank=True)
     otp_expiry = models.DateTimeField(_("otp expiry"), null=True, blank=True)
-    is_active = models.BooleanField(_("active"), default=False)
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
-    objects = CustomUsermanager()
+    objects = Usermanager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

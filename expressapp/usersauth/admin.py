@@ -1,13 +1,13 @@
 """ This module contains the admin model for managing user authentication. """
 
 from django.contrib import admin
-from .models import CustomUser
+from .models import User
 
 
-@admin.register(CustomUser)
-class CustomUseradmin(admin.ModelAdmin):
+@admin.register(User)
+class Useradmin(admin.ModelAdmin):
     """
-    A custom admin model for managing user authentication.
+    A class used to represent the User model in the admin interface.
     """
 
     list_display = [

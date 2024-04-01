@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from shortuuid.django_fields import ShortUUIDField
-from usersauth.models import CustomUser
+from usersauth.models import User
 
 """ This module contains the apartment booking model for the application. """
 
@@ -26,7 +26,7 @@ class ApartmentBooking(models.Model):
         "apartment.Apartment", on_delete=models.CASCADE, related_name="apartment_bookings"
     )
     user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="apartment_bookings"
+        User, on_delete=models.CASCADE, related_name="apartment_bookings"
     )
     salutation = models.CharField(max_length=10)
     full_name = models.CharField(max_length=255)

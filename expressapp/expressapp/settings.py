@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "drf_yasg",
+    'mailqueue',
     "usersauth",
     "hotel",
     "apartment",
@@ -50,9 +51,11 @@ INSTALLED_APPS = [
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
-        'Basic': {
-            'type': 'basic'
-        }
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        },
     }
 }
 
@@ -60,6 +63,13 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ],
 }
 
 SIMPLE_JWT = {
@@ -89,6 +99,7 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(days=1),
     "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(days=30),
 }
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -181,4 +192,19 @@ EMAIL_HOST_USER = "yiradesat@gmail.com"  # Replace with your email address
 EMAIL_HOST_PASSWORD = "ccpbkfoiflmrbock"  # Replace with your email password
 
 
-AUTH_USER_MODEL = "usersauth.CustomUser"
+AUTH_USER_MODEL = "usersauth.User"
+
+# If you're using Celery, set this to True
+MAILQUEUE_CELERY = False
+
+# Enable the mail queue. If this is set to False, the mail queue will be disabled and emails will be 
+# sent immediately instead.
+MAILQUEUE_QUEUE_UP = True
+
+# Maximum amount of emails to send during each queue run
+MAILQUEUE_LIMIT = 50
+
+# If MAILQUEUE_STORAGE is set to True, will ignore your default storage settings
+# and use Django's filesystem storage instead (stores them in MAILQUEUE_ATTACHMENT_DIR) 
+MAILQUEUE_STORAGE = False
+MAILQUEUE_ATTACHMENT_DIR = 'mailqueue-attachments'

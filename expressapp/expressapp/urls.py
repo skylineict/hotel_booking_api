@@ -15,17 +15,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import path, include
-from usersauth import urls as userauth_urls
-from hotel import urls as hotel_urls
-from apartment import urls as apartment_urls
-from hotel_booking import urls as hotel_booking_urls
-from apartment_booking import urls as apartment_booking_urls
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
+from django.shortcuts import redirect
+from django.urls import include, path, re_path
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
 
-schema_view = get_schema_view(
+from apartment import urls as apartment_urls
+from apartment_booking import urls as apartment_booking_urls
+from hotel import urls as hotel_urls
+from hotel_booking import urls as hotel_booking_urls
+from usersauth import urls as userauth_urls
+
+SchemaView = get_schema_view(
     openapi.Info(
         title="My API",
         default_version='v1',
@@ -45,6 +47,7 @@ urlpatterns = [
     path("apartment/", include(apartment_urls)),
     path("hotel-booking/", include(hotel_booking_urls)),
     path("apartment-booking/", include(apartment_booking_urls)),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('swagger/', SchemaView.with_ui('swagger'), name='swagger-ui'),
+    path('redoc/', SchemaView.with_ui('redoc'), name='redoc'),
+    re_path(r'^$', lambda request: redirect('swagger-ui')),
 ]
