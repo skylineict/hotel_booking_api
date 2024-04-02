@@ -1,0 +1,20 @@
+Watching for file changes with StatReloader
+[02/Apr/2024 09:02:27] "GET / HTTP/1.1" 302 0
+[02/Apr/2024 09:02:37] "GET /swagger/ HTTP/1.1" 200 2153
+[02/Apr/2024 09:02:37] "GET /static/drf-yasg/style.css HTTP/1.1" 304 0
+[02/Apr/2024 09:02:37] "GET /static/drf-yasg/swagger-ui-dist/swagger-ui.css HTTP/1.1" 304 0
+[02/Apr/2024 09:02:38] "GET /static/drf-yasg/insQ.min.js HTTP/1.1" 304 0
+[02/Apr/2024 09:02:38] "GET /static/drf-yasg/swagger-ui-init.js HTTP/1.1" 304 0
+[02/Apr/2024 09:02:38] "GET /static/drf-yasg/immutable.min.js HTTP/1.1" 304 0
+[02/Apr/2024 09:02:39] "GET /static/drf-yasg/swagger-ui-dist/swagger-ui-standalone-preset.js HTTP/1.1" 200 322863
+[02/Apr/2024 09:02:40] "GET /static/drf-yasg/swagger-ui-dist/swagger-ui-bundle.js HTTP/1.1" 200 1046583
+[02/Apr/2024 09:02:42] "GET /static/drf-yasg/swagger-ui-dist/favicon-32x32.png HTTP/1.1" 304 0
+[02/Apr/2024 09:02:42] "GET /swagger/?format=openapi HTTP/1.1" 200 8494
+[02/Apr/2024 09:02:43] "GET /swagger/?format=openapi HTTP/1.1" 200 8494
+sudo: a password is required
+[02/Apr/2024 09:02:49] "GET /swagger/ HTTP/1.1" 200 2153
+[02/Apr/2024 09:02:51] "GET /swagger/?format=openapi HTTP/1.1" 200 8494
+[02/Apr/2024 09:02:51] "GET /swagger/?format=openapi HTTP/1.1" 200 8494
+[02/Apr/2024 09:03:02] "GET /swagger/ HTTP/1.1" 200 2153
+[02/Apr/2024 09:03:03] "GET /swagger/?format=openapi HTTP/1.1" 200 8494
+[02/Apr/2024 09:03:03] "GET /swagger/?format=openapi HTTP/1.1" 200 8494
