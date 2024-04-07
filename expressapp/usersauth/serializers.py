@@ -25,6 +25,28 @@ class UserSerializer(ModelSerializer):
         }
 
 
+class UserUpdateSerializer(ModelSerializer):
+    """ Serializer for the UserUpdate model. """
+    class Meta:
+        """ Meta class for the UserUpdateSerializer."""
+        model = User
+        fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "email",
+            "phone",
+            "username",
+        )
+        extra_kwargs = {
+            "id": {"required": True},
+            "email": {"required": True},
+        }
+        extra_fields = {
+            "id": {"required": True},
+        }
+
+
 class UserSignupSerializer(ModelSerializer):
     """ Serializer for the UserSignup model. """
     class Meta:

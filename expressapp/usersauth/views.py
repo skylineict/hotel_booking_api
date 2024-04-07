@@ -15,7 +15,7 @@ from hotel_booking.models import HotelBooking
 from hotel_booking.serializers import HotelBookingSerializer
 
 from .models import User
-from .serializers import UserSerializer, UserSignupSerializer, UserActivationSerializer, ResendOTPSerializer, UserLoginSerializer
+from .serializers import UserSerializer, UserSignupSerializer, UserActivationSerializer, ResendOTPSerializer, UserLoginSerializer, UserUpdateSerializer
 from .utils import generate_otp
 
 
@@ -52,6 +52,28 @@ class UserSignup(APIView):
                     "data": serializer.data,
                 },
                 status=status.HTTP_201_CREATED,
+            )
+        raise ValidationError(serializer.errors)
+
+
+class UserUpdate(APIView):
+    """API endpoint to Update User"""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserUpdateSerializer
+    
+    @swagger_auto_schema(
+        request_body=UserUpdateSerializer,
+        responses={200: UserUpdateSerializer()},
+    )
+    def put(self, request):
+        """Update a user."""
+        serializer = UserUpdateSerializer(request.user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "User updated", "data": serializer.data},
+                status=status.HTTP_200_OK,
             )
         raise ValidationError(serializer.errors)
 
