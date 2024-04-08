@@ -22,22 +22,16 @@ class User(AbstractBaseUser):
         prefix="usr-",
         editable=False,
     )
-    firstname = models.CharField(_("first name"), max_length=50, null=True, blank=True)
-    lastname = models.CharField(_("last name"), max_length=50, null=True, blank=True)
-    username = models.CharField(
-        _("username"), unique=True, max_length=20, null=True, blank=True
-    )
+    firstname = models.CharField(_("first name"), max_length=50, null=True)
+    lastname = models.CharField(_("last name"), max_length=50, null=True)
+    username = models.CharField(_("username"), unique=True, max_length=20)
     email = models.EmailField(_("email address"), unique=True)
-    phone = models.CharField(
-        _("phone number"), unique=True, null=True, blank=True, max_length=15
-    )
-    dob = models.DateField(
-        _("date of birth"), null=True, blank=True
-    )
+    phone = models.CharField(_("phone number"), unique=True, null=True, max_length=15)
+    dob = models.DateField(_("date of birth"), null=True)
     is_vendor = models.BooleanField(_("vendor"), default=True)
     is_active = models.BooleanField(_("active"), default=False)
-    otp = models.CharField(_("otp"), max_length=6, null=True, blank=True)
-    otp_expiry = models.DateTimeField(_("otp expiry"), null=True, blank=True)
+    otp = models.CharField(_("otp"), max_length=6, null=True)
+    otp_expiry = models.DateTimeField(_("otp expiry"), null=True)
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
     objects = Usermanager()

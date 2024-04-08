@@ -12,10 +12,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv("../.env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -183,15 +187,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 # email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"  # Replace with your SMTP host
-EMAIL_PORT = 587  # Replace with your SMTP port
-# EMAIL_USE_SSL = True
-EMAIL_USE_TLS = True  # Use TLS encryption for security
-EMAIL_HOST_USER = "yiradesat@gmail.com"  # Replace with your email address
-EMAIL_HOST_PASSWORD = "ccpbkfoiflmrbock"  # Replace with your email password
-
+EMAIL_HOST = os.getenv("SMTP_HOST")
+EMAIL_PORT = os.getenv("SMTP_PORT")
+EMAIL_USE_TLS = os.getenv("SMTP_USE_TLS") == "True"  # Use TLS encryption for security
+EMAIL_HOST_USER = os.getenv("SMTP_USERNAME")  # Replace with your email address
+EMAIL_HOST_PASSWORD = os.getenv("SMTP_PASSWORD")  # Replace with your email password
 
 AUTH_USER_MODEL = "usersauth.User"
 
