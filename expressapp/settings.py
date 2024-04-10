@@ -13,10 +13,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
-from dotenv import load_dotenv
+import environ
 
 
-load_dotenv("../.env")
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -71,8 +72,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.MultiPartParser',
-        'rest_framework.parsers.FormParser',
         'rest_framework.parsers.JSONParser',
     ],
 }
@@ -190,11 +189,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv("SMTP_HOST")
-EMAIL_PORT = os.getenv("SMTP_PORT")
-EMAIL_USE_TLS = os.getenv("SMTP_USE_TLS") == "True"  # Use TLS encryption for security
-EMAIL_HOST_USER = os.getenv("SMTP_USERNAME")  # Replace with your email address
-EMAIL_HOST_PASSWORD = os.getenv("SMTP_PASSWORD")  # Replace with your email password
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_PORT")
+# EMAIL_USE_SSL = True
+EMAIL_USE_TLS = True  # Use TLS encryption for security
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
 AUTH_USER_MODEL = "usersauth.User"
 

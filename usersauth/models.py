@@ -24,9 +24,11 @@ class User(AbstractBaseUser):
     )
     firstname = models.CharField(_("first name"), max_length=50, null=True)
     lastname = models.CharField(_("last name"), max_length=50, null=True)
-    username = models.CharField(_("username"), unique=True, max_length=20)
+    username = models.CharField(
+        _("username"), unique=True, max_length=20, null=True)
     email = models.EmailField(_("email address"), unique=True)
-    phone = models.CharField(_("phone number"), unique=True, null=True, max_length=15)
+    phone = models.CharField(
+        _("phone number"), unique=True, null=True, max_length=15)
     dob = models.DateField(_("date of birth"), null=True)
     is_vendor = models.BooleanField(_("vendor"), default=True)
     is_active = models.BooleanField(_("active"), default=False)
