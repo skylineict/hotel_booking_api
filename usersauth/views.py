@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, status
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import ValidationError, NotFound, APIException
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -12,6 +12,7 @@ from apartment_booking.models import ApartmentBooking
 from apartment_booking.serializers import ApartmentBookingSerializer
 from hotel_booking.models import HotelBooking
 from hotel_booking.serializers import HotelBookingSerializer
+from expressapp.utils import CustomException
 
 from .models import User
 from .serializers import UserSerializer, UserSignupSerializer, UserActivationSerializer, ResendOTPSerializer, UserLoginSerializer, UserUpdateSerializer
@@ -42,13 +43,13 @@ class UserSignup(APIView):
                 },
                 status=status.HTTP_201_CREATED,
             )
-        raise ValidationError(
-            {
-                "status": "error",
-                "message": "User signup failed!",
-                "errors": serializer.errors,
-            }
-        )
+        raise CustomException(
+                {
+                    "status": "success",
+                    "errors": serializer.errors,
+                },
+                404
+            )      
 
 
 class UserUpdate(APIView):
