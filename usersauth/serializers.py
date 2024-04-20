@@ -53,11 +53,15 @@ class UserSignupSerializer(ModelSerializer):
         """ Meta class for the UserSignupSerializer."""
         model = User
         fields = (
+            "firstname",
+            "lastname",
             "email",
             "phone",
             "password",
         )
         extra_kwargs = {
+            "firstname": {"required": True},
+            "lastname": {"required": True},
             "email": {"required": True},
             "password": {"write_only": True},
         }

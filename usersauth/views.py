@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, status
-from rest_framework.exceptions import ValidationError, NotFound, APIException
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -44,11 +43,8 @@ class UserSignup(APIView):
                 status=status.HTTP_201_CREATED,
             )
         raise CustomException(
-                {
-                    "status": "success",
-                    "errors": serializer.errors,
-                },
-                404
+                serializer.errors,
+                400
             )      
 
 
@@ -71,8 +67,10 @@ class UserUpdate(APIView):
                 {"message": "User updated", "data": serializer.data},
                 status=status.HTTP_200_OK,
             )
-        raise ValidationError(serializer.errors)
-
+        raise CustomException(
+                serializer.errors,
+                400
+            )
 
 class UserLogin(APIView):
     """ API endpoint for user login. """
@@ -268,40 +266,36 @@ class ActivateAccount(APIView):
             user = User.objects.filter(email=email).first()
 
             if user is None:
-                raise NotFound(
-                    {
-                        "status": "error",
-                        "message": "User does not exist!",
-                        "errors": f"User with email {email} does not exist!",
-                    }
-                )
+                raise CustomException(
+                        {
+                            "message": f"User with email - {email} not found.",
+                        },
+                        404
+                    )      
 
             if user.is_active:
-                raise ValidationError(
-                    {
-                        "status": "error",
-                        "message": "Account is already activated!",
-                        "errors": f"Account with email {email} is already activated!",
-                    }
-                )
+                raise CustomException(
+                        {
+                            "message": "Account is already activated.",
+                        },
+                        400
+                    )  
 
             if user.otp != otp:
-                raise ValidationError(
-                    {
-                        "status": "error",
-                        "message": "Invalid OTP!",
-                        "errors": "Invalid OTP!",
-                    }
-                )
+                raise CustomException(
+                        {
+                            "message": "Invalid OTP.",
+                        },
+                        400
+                    )  
 
             if user.otp_expiry < timezone.now():
-                raise ValidationError(
-                    {
-                        "status": "error",
-                        "message": "OTP has expired!",
-                        "errors": "OTP has expired!",
-                    }
-                )
+                raise CustomException(
+                        {
+                            "message": "OTP has expired.",
+                        },
+                        400
+                    ) 
 
             user.is_active = True
             user.otp = None
@@ -315,10 +309,9 @@ class ActivateAccount(APIView):
                 },
                 status=status.HTTP_200_OK,
             )
-        raise ValidationError(
-            {
-                "status": "error",
-                "message": "Account activation failed!",
-                "errors": serializer.errors,
-            }
-        )
+        raise CustomException(
+                {
+                    "errors": serializer.errors,
+                },
+                400
+            ) 
