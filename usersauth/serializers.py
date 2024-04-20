@@ -56,6 +56,7 @@ class UserSignupSerializer(ModelSerializer):
             "firstname",
             "lastname",
             "email",
+            "username",
             "phone",
             "password",
         )
@@ -63,6 +64,7 @@ class UserSignupSerializer(ModelSerializer):
             "firstname": {"required": True},
             "lastname": {"required": True},
             "email": {"required": True},
+            "username": {"required": True},
             "password": {"write_only": True},
         }
 
