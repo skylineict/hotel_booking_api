@@ -26,7 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-wtcb-w&iba@t@cqkz@ql26j&1!5jipso3ehzp!40)z@rcm&$g%"
+SECRET_KEY = (
+    "django-insecure-wtcb-w&iba@t@cqkz@ql26j&1!5jipso3ehzp!40)z@rcm&$g%"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "drf_yasg",
+    "mjml",
     "mailqueue",
     "user",
     "hotel",
@@ -53,6 +56,9 @@ INSTALLED_APPS = [
     "hotel_booking",
     "apartment_booking",
 ]
+
+MJML_BACKEND_MODE = "cmd"
+MJML_EXEC_CMD = "node_modules/.bin/mjml"
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
@@ -116,10 +122,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "expressapp.urls"
 
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

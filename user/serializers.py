@@ -19,7 +19,12 @@ class UserSerializer(ModelSerializer):
             "reset_password_otp",
             "reset_password_otp_expiration",
         ]
-        read_only_fields = ["id", "is_vendor"]
+        read_only_fields = [
+            "id",
+            "is_vendor",
+            "email_verified",
+            "phone_verified",
+        ]
         extra_kwargs = {
             "password": {"write_only": True},
         }
@@ -58,11 +63,11 @@ class UserLoginSerializer(ModelSerializer):
         }
 
 
-class UserActivationSerializer(ModelSerializer):
-    """Serializer for the UserActivation model."""
+class EmailVerificationSerializer(ModelSerializer):
+    """Serializer for the EmailVerification."""
 
     class Meta:
-        """Meta class for the UserActivationSerializer."""
+        """Meta class for the EmailVerificationSerializer."""
 
         model = User
         fields = (

@@ -1,0 +1,41 @@
+{% load mjml %}
+
+{% mjml %}
+<mjml>
+  <mj-head>
+    <mj-font name="Montserrat" href="https://fonts.googleapis.com/css?family=Montserrat" />
+    <mj-attributes>
+      <mj-text font-family="Montserrat, Helvetica, Arial, sans-serif" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#f8f8f8">
+    <mj-section padding="20px 0" text-align="center">
+      <mj-column>
+        <mj-image src="https://www.classy.org/wp-content/uploads/2021/05/blog-welcome-emailv2-header.png" width="300px" />
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding="20px 0">
+      <mj-column>
+        <mj-divider border-color="#0B1B34" border-width="7px" padding="10px 25px" width="100%" />
+        <mj-image src="https://media.licdn.com/dms/image/C4E0BAQFTS6NxpmClYg/company-logo_200_200/0/1631336224541?e=2147483647&v=beta&t=EhLchPm7Z9qhQKuKXiVWadLJKTxYd0lY8JUeoFnPiaQ" width="110px" />
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding-bottom="70px" padding-top="30px">
+      <mj-column>
+        <mj-text line-height="22px" padding="0px 25px 0px 25px">
+          <h1 style="text-align:center; color: #000000; line-height:32px">You're almost there!</h1>
+          <p style="margin: 10px 0; text-align: center;">Hi {{name}}, Thank you for signing up to JE Express.</p>
+          <p style="margin: 10px 0; text-align: center;">To confirm your account, please enter the 6-digit OTP below:</p>
+        </mj-text>
+        <mj-text font-weight="bold" padding="10px">
+          <h1 style="text-align: center">{{otp}}</h1>
+        </mj-text>
+        <mj-text font-size="13px" line-height="22px" padding="0px 25px 0px 25px">
+          <p style="margin: 10px 0; text-align: center;">If you didn't receive the OTP, please try resending it.</p>
+          <p style="margin: 10px 0; text-align: center;"><i>Welcome!</i></p>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
+{% endmjml %}

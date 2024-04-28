@@ -35,30 +35,23 @@ class Usermanager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(
-        self, email, username=None, phone=None, password=None, **extra_fields
+    def create_vendor(
+        self, email, password, username=None, phone=None, **extra_fields
     ):
         """
-        Creates a new superuser with the email, username, phone, and password.
+        Creates a vendor with the given email, username, phone, and password.
 
         Args:
-            email (str): The email address of the superuser.
-            username (str, optional): The username of the superuser.
-            phone (str, optional): The phone number of the superuser.
-            password (str, optional): The password for the superuser.
-            **extra_fields: Additional fields to be saved in the user model.
+            email (str): The email address of the vendor.
+            username (str, optional): The username of the vendor.
+            phone (str, optional): The phone number of the vendor.
+            password (str, optional): The password for the vendor.
+            **extra_fields: Additional fields to be saved in the vendor model.
 
         Returns:
-            User: The created superuser object.
+            Vendor: The created vendor object.
         """
-        user = self.create_user(
-            email=email,
-            username=username,
-            phone=phone,
-            password=password,
-            **extra_fields
+        extra_fields.setdefault("is_vendor", True)
+        return self.create_user(
+            email, password, username, phone, **extra_fields
         )
-        user.is_staff = True
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
