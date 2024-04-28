@@ -46,7 +46,7 @@ class User(AbstractBaseUser):
     objects = Usermanager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    
 
     class Meta:
         """
@@ -59,6 +59,11 @@ class User(AbstractBaseUser):
     def __str__(self):
         return str(self.email)
 
+    def save(self, *args, **kwargs):
+        if not self.password.startswith('pbkdf2_sha256$'):
+            self.set_password(self.password)
+        super().save(*args, **kwargs)
+
     def generate_verification_otp(self):
         """Send OTP to the user."""
         otp = generate_otp()
@@ -66,11 +71,11 @@ class User(AbstractBaseUser):
         self.verification_otp_expiration = timezone.now() + timezone.timedelta(
             minutes=30
         )
-        self.is_active = False
+        self.is_active = True
         self.save()
-        # send_mail(
-        #     "JE Express Account Activation",
-        #     f"Your OTP is {otp}. Use it to activate your account.",
-        #     None,
-        #     [self.email],
-        # )
+        send_mail(
+            "JE Express Account Activation",
+            f"Your OTP is {otp}. Use it to activate your account.",
+            None,
+            [self.email],
+        )
