@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "drf_yasg",
-    'mailqueue',
-    "usersauth",
+    "mailqueue",
+    "user",
     "hotel",
     "apartment",
     "hotel_booking",
@@ -55,11 +55,11 @@ INSTALLED_APPS = [
 ]
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
+    "SECURITY_DEFINITIONS": {
         "Auth Token, eg: [Bearer <JWT>]": {
             "type": "apiKey",
             "name": "Authorization",
-            "in": "header"
+            "in": "header",
         }
     }
 }
@@ -68,11 +68,11 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
     ],
-    'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
     ],
 }
 
@@ -196,12 +196,12 @@ EMAIL_USE_TLS = True  # Use TLS encryption for security
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
-AUTH_USER_MODEL = "usersauth.User"
+AUTH_USER_MODEL = "user.User"
 
 # If you're using Celery, set this to True
 MAILQUEUE_CELERY = False
 
-# Enable the mail queue. If this is set to False, the mail queue will be disabled and emails will be 
+# Enable the mail queue. If this is set to False, the mail queue will be disabled and emails will be
 # sent immediately instead.
 MAILQUEUE_QUEUE_UP = True
 
@@ -209,6 +209,6 @@ MAILQUEUE_QUEUE_UP = True
 MAILQUEUE_LIMIT = 50
 
 # If MAILQUEUE_STORAGE is set to True, will ignore your default storage settings
-# and use Django's filesystem storage instead (stores them in MAILQUEUE_ATTACHMENT_DIR) 
+# and use Django's filesystem storage instead (stores them in MAILQUEUE_ATTACHMENT_DIR)
 MAILQUEUE_STORAGE = False
-MAILQUEUE_ATTACHMENT_DIR = 'mailqueue-attachments'
+MAILQUEUE_ATTACHMENT_DIR = "mailqueue-attachments"

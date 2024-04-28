@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from shortuuid.django_fields import ShortUUIDField
 
-from usersauth.models import User
+from user.models import User
 
 
 class Apartment(models.Model):
@@ -19,9 +19,7 @@ class Apartment(models.Model):
         editable=False,
         primary_key=True,
     )
-    agent = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="apartments"
-    )
+    agent = models.ForeignKey(User, on_delete=models.CASCADE, related_name="apartments")
     name = models.CharField(max_length=255)
     description = models.TextField()
     featured_image = models.URLField()
@@ -51,4 +49,3 @@ class Apartment(models.Model):
 
     def save(self, *args, **kwargs):
         return super().save(*args, **kwargs)
-

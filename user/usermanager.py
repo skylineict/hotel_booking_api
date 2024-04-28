@@ -9,9 +9,7 @@ class Usermanager(BaseUserManager):
     Custom user manager for creating and managing user accounts.
     """
 
-    def create_user(
-        self, email, password, username=None, phone=None, **extra_fields
-    ):
+    def create_user(self, email, password, username=None, phone=None, **extra_fields):
         """
         Creates a new user with the given email, username, phone, and password.
 
@@ -28,14 +26,12 @@ class Usermanager(BaseUserManager):
         if not email:
             raise ValueError(_("The Email field must be set"))
         email = self.normalize_email(email)
-        user = self.model(
-            email=email, username=username, phone=phone, **extra_fields
-        )
+        user = self.model(email=email, username=username, phone=phone, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(
+    def create_vendor(
         self, email, username=None, phone=None, password=None, **extra_fields
     ):
         """
@@ -58,7 +54,6 @@ class Usermanager(BaseUserManager):
             password=password,
             **extra_fields
         )
-        user.is_staff = True
-        user.is_admin = True
+        user.is_vendor = True
         user.save(using=self._db)
         return user

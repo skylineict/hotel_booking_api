@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from shortuuid.django_fields import ShortUUIDField
 
-from usersauth.models import User
+from user.models import User
 
 
 class Hotel(models.Model):
@@ -18,9 +18,7 @@ class Hotel(models.Model):
         editable=False,
         primary_key=True,
     )
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="hotels"
-    )
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="hotels")
     name = models.CharField(max_length=255)
     description = models.TextField()
     featured_image = models.URLField()
@@ -61,9 +59,7 @@ class HotelRoom(models.Model):
         editable=False,
         primary_key=True,
     )
-    hotel = models.ForeignKey(
-        Hotel, on_delete=models.CASCADE, related_name="rooms"
-    )
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name="rooms")
     name = models.CharField(max_length=255)
     description = models.TextField()
     image = models.URLField()
@@ -99,9 +95,7 @@ class HotelBooking(models.Model):
         editable=False,
         primary_key=True,
     )
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="bookings"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
     room = models.ForeignKey(
         HotelRoom, on_delete=models.CASCADE, related_name="bookings"
     )
@@ -137,12 +131,8 @@ class HotelReview(models.Model):
         editable=False,
         primary_key=True,
     )
-    hotel = models.ForeignKey(
-        Hotel, on_delete=models.CASCADE, related_name="reviews"
-    )
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reviews"
-    )
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name="reviews")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
     rating = models.PositiveIntegerField()
     review = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)

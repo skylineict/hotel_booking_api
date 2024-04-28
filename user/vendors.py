@@ -1,4 +1,4 @@
-""" This module contains the views for the usersauth app. """
+""" This module contains the views for the user app. """
 
 import datetime
 from django.core.mail import send_mail

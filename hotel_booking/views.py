@@ -1,4 +1,4 @@
-""" This module contains the views for the usersauth app. """
+""" This module contains the views for the user app. """
 
 from rest_framework.response import Response
 from rest_framework.views import APIView

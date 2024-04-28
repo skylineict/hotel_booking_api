@@ -1,4 +1,4 @@
-""" This module contains the views for the usersauth app. """
+""" This module contains the views for the user app. """
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,7 +7,12 @@ from drf_yasg.utils import swagger_auto_schema
 
 from hotel.models import Hotel
 from hotel_booking.models import HotelBooking
-from .serializers import HotelSerializer, UpdateHotelSerializer, HotelRoomSerializer, HotelBookingSerializer
+from .serializers import (
+    HotelSerializer,
+    UpdateHotelSerializer,
+    HotelRoomSerializer,
+    HotelBookingSerializer,
+)
 from hotel_booking.serializers import HotelBookingSerializer
 
 
@@ -29,7 +34,7 @@ class CreateHotel(APIView):
         """Create a new hotel."""
         serializer = HotelSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save() /m
+            serializer.save() / m
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -184,7 +189,9 @@ class CreateRoom(APIView):
         try:
             hotel = Hotel.objects.get(hotel_id=hotel_id)
         except Hotel.DoesNotExist:
-            return Response({"error": "Hotel does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Hotel does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = HotelRoomSerializer(data=request.data)
         if serializer.is_valid():
@@ -374,7 +381,8 @@ class ListBookings(APIView):
 
         if filters:
             bookings = HotelBooking.objects.filter(
-                **filters)  # Key-value pairs not working
+                **filters
+            )  # Key-value pairs not working
         else:
             bookings = HotelBooking.objects.all()
         serializer = HotelBookingSerializer(bookings, many=True)

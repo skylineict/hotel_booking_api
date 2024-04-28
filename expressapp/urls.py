@@ -17,37 +17,25 @@ Including another URLconf
 
 from django.shortcuts import redirect
 from django.urls import include, path, re_path
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
-from rest_framework import permissions
 
+from expressapp.swagger import SchemaView
 from apartment import urls as apartment_urls
 from apartment_booking import urls as apartment_booking_urls
 from hotel import urls as hotel_urls
 from hotel_booking import urls as hotel_booking_urls
-from usersauth import urls as userauth_urls
-
-SchemaView = get_schema_view(
-    openapi.Info(
-        title="My API",
-        default_version='v1',
-        description="My API description",
-        terms_of_service="https://www.example.com/terms/",
-        contact=openapi.Contact(email="contact@example.com"),
-        license=openapi.License(name="Awesome License"),
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
+from user import urls as userauth_urls
+from user.views import UserView, UserList
 
 
 urlpatterns = [
-    path("user/", include(userauth_urls)),
+    path("users", UserList.as_view(), name="user-list"),
+    path("users/<str:user_id>", UserView.as_view(), name="user-list"),
+    path("user/", include(userauth_urls), name="User Authentication"),
     path("hotel/", include(hotel_urls)),
     path("apartment/", include(apartment_urls)),
     path("hotel-booking/", include(hotel_booking_urls)),
     path("apartment-booking/", include(apartment_booking_urls)),
-    path('swagger/', SchemaView.with_ui('swagger'), name='swagger-ui'),
-    path('redoc/', SchemaView.with_ui('redoc'), name='redoc'),
-    re_path(r'^$', lambda request: redirect('swagger-ui')),
+    path("swagger/", SchemaView.with_ui("swagger"), name="swagger-ui"),
+    path("redoc/", SchemaView.with_ui("redoc"), name="redoc"),
+    re_path(r"^$", lambda request: redirect("swagger-ui")),
 ]

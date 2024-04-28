@@ -1,8 +1,9 @@
 """ This module contains the hotel booking model for the application. """
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from shortuuid.django_fields import ShortUUIDField
-from usersauth.models import User
+from user.models import User
 
 
 class HotelBooking(models.Model):

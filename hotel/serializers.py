@@ -41,7 +41,12 @@ class UpdateHotelSerializer(HotelSerializer):
         }
 
         read_only_fields = (
-            "hotel_id", "owner", "registration_status", "date_registered", "date_updated")
+            "hotel_id",
+            "owner",
+            "registration_status",
+            "date_registered",
+            "date_updated",
+        )
 
 
 class HotelRoomSerializer(ModelSerializer):
