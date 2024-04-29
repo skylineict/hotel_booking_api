@@ -18,3 +18,4 @@ sudo: a password is required
 [02/Apr/2024 09:03:02] "GET /swagger/ HTTP/1.1" 200 2153
 [02/Apr/2024 09:03:03] "GET /swagger/?format=openapi HTTP/1.1" 200 8494
 [02/Apr/2024 09:03:03] "GET /swagger/?format=openapi HTTP/1.1" 200 8494
+sudo: a password is required

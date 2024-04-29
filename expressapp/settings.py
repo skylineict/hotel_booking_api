@@ -210,7 +210,7 @@ MAILQUEUE_CELERY = False
 
 # Enable the mail queue. If this is set to False, the mail queue will be disabled and emails will be
 # sent immediately instead.
-MAILQUEUE_QUEUE_UP = True
+MAILQUEUE_QUEUE_UP = False
 
 # Maximum amount of emails to send during each queue run
 MAILQUEUE_LIMIT = 1
