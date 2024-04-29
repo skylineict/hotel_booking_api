@@ -10,7 +10,8 @@ from .views import (
     ValidateResetOTP,
     ResetPasswordView,
     ResendOTP,
-    # SuspendUser,
+    SuspendUser,
+    UnsuspendUser,
 )
 
 urlpatterns = [
@@ -22,7 +23,8 @@ urlpatterns = [
     path("validate-reset-otp", ValidateResetOTP.as_view()),
     path("reset-password", ResetPasswordView.as_view()),
     path("resend-otp", ResendOTP.as_view()),
-    # path("suspend", SuspendUser.as_view(), name="suspend"),
+    path("suspend", SuspendUser.as_view()),
+    path("unsuspend", UnsuspendUser.as_view()),
     # path("resend-otp", ResendOTP.as_view(), name="resend-otp"),
     # path("vendor-signup", vendor_signup, name="vendor-signup"),
     # path(

@@ -52,9 +52,6 @@ INSTALLED_APPS = [
     "mailqueue",
     "user",
     "hotel",
-    "apartment",
-    "hotel_booking",
-    "apartment_booking",
 ]
 
 MJML_BACKEND_MODE = "cmd"

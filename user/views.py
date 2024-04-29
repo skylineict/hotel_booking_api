@@ -331,7 +331,7 @@ class ResendOTP(APIView):
         return CustomException(serializer.errors, 400)
 
 
-class Suspend(APIView):
+class SuspendUser(APIView):
     """ API Endpoint to Suspend a User"""
     @swagger_auto_schema(
         operation_summary="Suspend a User.",
@@ -350,7 +350,7 @@ class Suspend(APIView):
         )
 
 
-class Unsuspend(APIView):
+class UnsuspendUser(APIView):
     """ API Endpoint to Unsuspend a User"""
     @swagger_auto_schema(
         operation_summary="Unsuspend a User.",

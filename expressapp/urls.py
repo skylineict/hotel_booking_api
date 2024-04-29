@@ -19,23 +19,17 @@ from django.shortcuts import redirect
 from django.urls import include, path, re_path
 
 from expressapp.swagger import SchemaView
-from apartment import urls as apartment_urls
-from apartment_booking import urls as apartment_booking_urls
 from hotel import urls as hotel_urls
-from hotel_booking import urls as hotel_booking_urls
-from user import urls as userauth_urls
+from user import urls as user_urls
 from user.views import UserView, UserList
 
 
 urlpatterns = [
-    path("users", UserList.as_view(), name="user-list"),
-    path("users/<str:user_id>", UserView.as_view(), name="user-list"),
-    path("user/", include(userauth_urls), name="User Authentication"),
-    # path("hotel/", include(hotel_urls)),
-    # path("apartment/", include(apartment_urls)),
-    # path("hotel-booking/", include(hotel_booking_urls)),
-    # path("apartment-booking/", include(apartment_booking_urls)),
-    path("swagger/", SchemaView.with_ui("swagger"), name="swagger-ui"),
-    path("redoc/", SchemaView.with_ui("redoc"), name="redoc"),
+    path("users", UserList.as_view()),
+    path("users/<str:user_id>", UserView.as_view()),
+    path("user/", include(user_urls)),
+    path("hotel/", include(hotel_urls)),
+    path("swagger/", SchemaView.with_ui("swagger")),
+    path("redoc/", SchemaView.with_ui("redoc")),
     re_path(r"^$", lambda request: redirect("swagger-ui")),
 ]
