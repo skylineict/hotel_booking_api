@@ -29,7 +29,7 @@ urlpatterns = [
     path("users/<str:user_id>", UserView.as_view()),
     path("user/", include(user_urls)),
     path("hotel/", include(hotel_urls)),
-    path("swagger/", SchemaView.with_ui("swagger")),
-    path("redoc/", SchemaView.with_ui("redoc")),
+    path("swagger", SchemaView.with_ui("swagger"), name="swagger-ui"),
+    path("redoc", SchemaView.with_ui("redoc")),
     re_path(r"^$", lambda request: redirect("swagger-ui")),
 ]

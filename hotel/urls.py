@@ -11,10 +11,6 @@ from .views import (
     UpdateRoom,
     DeleteRoom,
     ListRooms,
-    BookHotel,
-    CancelBooking,
-    CheckoutBooking,
-    ListBookings,
 )
 
 urlpatterns = [
@@ -29,16 +25,4 @@ urlpatterns = [
     path("<str:hotel_id>/room/<str:room_id>", UpdateRoom.as_view(), name= "update room"),
     path("<str:hotel_id>/room/<str:room_id>", DeleteRoom.as_view(), name="delete room"),
     path("<str:hotel_id>/rooms", ListRooms.as_view(), name="list rooms"),
-    path("<str:hotel_id>/book", BookHotel.as_view(), name="book hotel"),
-    path(
-        "<str:hotel_id>/bookings/<str:booking_id>/cancel",
-        CancelBooking.as_view(),
-        name="cancel booking",
-    ),
-    path(
-        "<str:hotel_id>/bookings/<str:booking_id>/checkout",
-        CheckoutBooking.as_view(),
-        name="checkout booking",
-    ),
-    path("<str:hotel_id>/bookings", ListBookings.as_view(), name="list bookings"),
 ]
