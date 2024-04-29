@@ -1,11 +1,14 @@
 """ This module contains the custom user model for the application. """
 
+import string
+import random
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from shortuuid.django_fields import ShortUUIDField
+from mailqueue.models import MailerMessage
 
 from user.usermanager import Usermanager
 from user.utils import generate_otp
@@ -73,15 +76,18 @@ class User(AbstractBaseUser):
         )
         self.is_active = True
         self.save()
-        context = {"name": self.firstname, "otp": self.verification_otp}
+        context = {
+            "firstname": self.firstname,
+            "verification_otp": self.verification_otp,
+        }
         message = render_to_string("verification.html", context)
-        send_mail(
-            "JE Express Account Activation",
-            message,
-            None,
-            [self.email],
-            html_message=message,
-        )
+        msg = MailerMessage()
+        msg.subject = "JE Express Account Activation"
+        msg.to_address = self.email
+        msg.from_address = "JE Express <yiradesat@gmal.com>"
+        msg.content = message
+        msg.html_content = message
+        msg.save()
 
     def generate_reset_password_otp(self):
         """Generate OTP for resetting password."""
@@ -91,12 +97,50 @@ class User(AbstractBaseUser):
             timezone.now() + timezone.timedelta(minutes=5)
         )
         self.save()
-        context = {"otp": otp, "name": self.firstname}
-        message = render_to_string("verification.html", context)
-        send_mail(
-            "JE Express Account Activation",
-            message,
-            None,
-            [self.email],
-            html_message=message,
+        context = {
+            "firstname": self.firstname,
+            "reset_password_otp": self.reset_password_otp,
+        }
+        message = render_to_string("reset_password.html", context)
+        msg = MailerMessage()
+        msg.subject = "JE Express Reset Password"
+        msg.to_address = self.email
+        msg.from_address = "JE Express <yiradesat@gmal.com>"
+        msg.content = message
+        msg.html_content = message
+        msg.save()
+
+
+class ResetPassword(models.Model):
+    """Reset Password Model."""
+
+    user = models.ForeignKey(
+        User, 
+        primary_key=True,
+        unique=True, 
+        on_delete=models.CASCADE,
+        editable=False
+    )
+    reset_password_token = models.CharField(
+        max_length=24,
+    )
+    expiration_time = models.DateTimeField(
+    )
+
+    objects = models.Manager()
+
+    class Meta:
+        """Metadata for the Reset Password model."""
+
+        verbose_name = "reset_password"
+
+    def __str__(self):
+        return str(self.id)
+
+    def save(self, *args, **kwargs):
+        allowed_chars = ''.join((string.ascii_letters, string.digits))
+        self.reset_password_token = ''.join(random.choice(allowed_chars) for _ in range(20))
+        self.expiration_time = (
+            timezone.now() + timezone.timedelta(minutes=5)
         )
+        return super().save(*args, **kwargs)

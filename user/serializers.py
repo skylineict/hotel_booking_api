@@ -1,7 +1,7 @@
 """ Serializers for the user app. """
 
-from rest_framework.serializers import ModelSerializer
-from .models import User
+from rest_framework.serializers import ModelSerializer, CharField, ChoiceField
+from .models import User, ResetPassword
 
 
 class UserSerializer(ModelSerializer):
@@ -80,14 +80,54 @@ class EmailVerificationSerializer(ModelSerializer):
         }
 
 
+class ValidateResetOTPSerializer(ModelSerializer):
+    """Serializer for the EmailVerification."""
+
+    class Meta:
+        """Meta class for the EmailVerificationSerializer."""
+
+        model = User
+        fields = (
+            "email",
+            "reset_password_otp",
+        )
+        extra_kwargs = {
+            "email": {"required": True, "validators": []},
+            "reset_password_otp": {"required": True},
+        }
+
+
+class ResetPasswordSerializer(ModelSerializer):
+    """Serializer for the ResetPassword."""
+
+    new_password = CharField()
+
+    class Meta:
+        """Meta class for the ResetPasswordSerializer."""
+
+        model = ResetPassword
+        fields = ("reset_password_token", "new_password")
+        extra_kwargs = {
+            "reset_password_token": {"required": True},
+            "new_password": {"required": True},
+        }
+
+
 class ResendOTPSerializer(ModelSerializer):
     """Serializer for the UserResendOTP model."""
+
+    PURPOSES = [
+        ("verification", "Verification"),
+        ("reset-password", "Reset Password"),
+    ]
+    purpose = ChoiceField(choices=PURPOSES)
 
     class Meta:
         """Meta class for the UserResendOTPSerializer."""
 
         model = User
-        fields = ("email",)
+        fields = ("email", "purpose")
         extra_kwargs = {
             "email": {"required": True, "validators": []},
+            "purpose": {"required": True},
         }

@@ -213,7 +213,7 @@ MAILQUEUE_CELERY = False
 MAILQUEUE_QUEUE_UP = True
 
 # Maximum amount of emails to send during each queue run
-MAILQUEUE_LIMIT = 50
+MAILQUEUE_LIMIT = 1
 
 # If MAILQUEUE_STORAGE is set to True, will ignore your default storage settings
 # and use Django's filesystem storage instead (stores them in MAILQUEUE_ATTACHMENT_DIR)
