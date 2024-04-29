@@ -114,10 +114,9 @@ class User(AbstractBaseUser):
 class ResetPassword(models.Model):
     """Reset Password Model."""
 
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User, 
         primary_key=True,
-        unique=True, 
         on_delete=models.CASCADE,
         editable=False
     )
