@@ -3,7 +3,6 @@
 import string
 import random
 from django.utils import timezone
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
@@ -46,6 +45,7 @@ class User(AbstractBaseUser):
     verification_otp_expiration = models.DateTimeField(null=True)
     reset_password_otp = models.CharField(max_length=6, blank=True, null=True)
     reset_password_otp_expiration = models.DateTimeField(null=True)
+    is_suspended = models.BooleanField(default=False)
 
     objects = Usermanager()
 
@@ -74,7 +74,6 @@ class User(AbstractBaseUser):
         self.verification_otp_expiration = timezone.now() + timezone.timedelta(
             minutes=5
         )
-        self.is_active = True
         self.save()
         context = {
             "firstname": self.firstname,
@@ -93,8 +92,8 @@ class User(AbstractBaseUser):
         """Generate OTP for resetting password."""
         otp = generate_otp()
         self.reset_password_otp = otp
-        self.reset_password_otp_expiration = (
-            timezone.now() + timezone.timedelta(minutes=5)
+        self.reset_password_otp_expiration = timezone.now() + timezone.timedelta(
+            minutes=5
         )
         self.save()
         context = {
@@ -115,16 +114,12 @@ class ResetPassword(models.Model):
     """Reset Password Model."""
 
     user = models.OneToOneField(
-        User, 
-        primary_key=True,
-        on_delete=models.CASCADE,
-        editable=False
+        User, primary_key=True, on_delete=models.CASCADE, editable=False
     )
     reset_password_token = models.CharField(
         max_length=24,
     )
-    expiration_time = models.DateTimeField(
-    )
+    expiration_time = models.DateTimeField()
 
     objects = models.Manager()
 
@@ -137,9 +132,9 @@ class ResetPassword(models.Model):
         return str(self.id)
 
     def save(self, *args, **kwargs):
-        allowed_chars = ''.join((string.ascii_letters, string.digits))
-        self.reset_password_token = ''.join(random.choice(allowed_chars) for _ in range(20))
-        self.expiration_time = (
-            timezone.now() + timezone.timedelta(minutes=5)
+        allowed_chars = "".join((string.ascii_letters, string.digits))
+        self.reset_password_token = "".join(
+            random.choice(allowed_chars) for _ in range(20)
         )
+        self.expiration_time = timezone.now() + timezone.timedelta(minutes=5)
         return super().save(*args, **kwargs)

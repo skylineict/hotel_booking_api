@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
-import os
-import environ
 
+import cloudinary
+import environ
 
 env = environ.Env()
 environ.Env.read_env()
@@ -26,9 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-wtcb-w&iba@t@cqkz@ql26j&1!5jipso3ehzp!40)z@rcm&$g%"
-)
+SECRET_KEY = "django-insecure-wtcb-w&iba@t@cqkz@ql26j&1!5jipso3ehzp!40)z@rcm&$g%"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -50,9 +48,17 @@ INSTALLED_APPS = [
     "drf_yasg",
     "mjml",
     "mailqueue",
+    "cloudinary",
+    "image",
     "user",
     "hotel",
 ]
+
+cloudinary.config(
+    cloud_name="destinedcodes",
+    api_key="488145725442688",
+    api_secret="R7Ju5kI3-iL7bEMlkOtMimjYeVQ",
+)
 
 MJML_BACKEND_MODE = "cmd"
 MJML_EXEC_CMD = "node_modules/.bin/mjml"

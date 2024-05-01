@@ -30,6 +30,7 @@ class UserSignup(APIView):
         request_body=UserSerializer,
         responses={201: UserSerializer()},
         security=[],
+        order=1,
     )
     def post(self, request):
         """Create a new user account."""
@@ -47,6 +48,68 @@ class UserSignup(APIView):
                 status=status.HTTP_201_CREATED,
             )
         return CustomException(user_serializer.errors, 400)
+
+
+class VendorSignup(APIView):
+    """Create a new vendor account."""
+
+    @swagger_auto_schema(
+        operation_summary="Create a new vendor account.",
+        request_body=UserSerializer,
+        responses={201: UserSerializer()},
+        security=[],
+    )
+    def post(self, request):
+        """Create a new vendor account."""
+        vendor_serializer = UserSerializer(data=request.data)
+        if vendor_serializer.is_valid():
+            vendor_serializer.validated_data["is_vendor"] = True
+            vendor = vendor_serializer.save()
+            vendor.generate_verification_otp()
+
+            return Response(
+                {
+                    "status": "success",
+                    "message": "Verification OTP sent to your email.",
+                    "data": vendor_serializer.data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        return CustomException(vendor_serializer.errors, 400)
+
+
+class UserLogin(APIView):
+    """Authenticate a user."""
+
+    @swagger_auto_schema(
+        operation_summary="Authenticate a user.",
+        request_body=UserLoginSerializer,
+        responses={200: UserSerializer()},
+        security=[],
+    )
+    def post(self, request):
+        """Handle user login."""
+        login_serializer = UserLoginSerializer(data=request.data)
+        if login_serializer.is_valid():
+            email = login_serializer.validated_data["email"]
+            password = login_serializer.validated_data["password"]
+
+            user = authenticate(email=email, password=password)
+
+            if not user:
+                return CustomException("Invalid email or password", 401)
+
+            if not user.email_verified:
+                return CustomException("Email not verified", 401)
+
+            if user.is_suspended:
+                return CustomException("Suspended account: Please contact support", 401)
+
+            user_data = UserSerializer(user).data
+            access_token = RefreshToken.for_user(user).access_token
+            user_data["access_token"] = str(access_token)
+            return CustomResponse(user_data, "Logged in successfully", 200)
+        return CustomException(login_serializer.errors, 400)
 
 
 class UserList(APIView):
@@ -80,13 +143,9 @@ class UserView(APIView):
         """Retrieve a user."""
         user = User.objects.filter(id=user_id).first()
         if not user:
-            return CustomException(
-                f"{user_id or request.user.id} not found", 404
-            )
+            return CustomException(f"{user_id or request.user.id} not found", 404)
         user_serializer = UserSerializer(user)
-        return CustomResponse(
-            user_serializer.data, "User retrieved successfully", 200
-        )
+        return CustomResponse(user_serializer.data, "User retrieved successfully", 200)
 
 
 class UserUpdate(APIView):
@@ -106,46 +165,8 @@ class UserUpdate(APIView):
             serializer.save()
             serializer = UserSerializer(request.user)
 
-            return CustomResponse(
-                serializer.data, "User updated successfully", 200
-            )
+            return CustomResponse(serializer.data, "User updated successfully", 200)
         return CustomException(serializer.errors, 400)
-
-
-class UserLogin(APIView):
-    """Authenticate a user."""
-
-    @swagger_auto_schema(
-        operation_summary="Authenticate a user.",
-        request_body=UserLoginSerializer,
-        responses={200: UserSerializer()},
-        security=[],
-    )
-    def post(self, request):
-        """Handle user login."""
-        login_serializer = UserLoginSerializer(data=request.data)
-        if login_serializer.is_valid():
-            email = login_serializer.validated_data["email"]
-            password = login_serializer.validated_data["password"]
-
-            user = authenticate(email=email, password=password)
-
-            if not user:
-                return CustomException("Invalid email or password", 401)
-
-            if not user.email_verified:
-                return CustomException("Email not verified", 401)
-
-            if not user.is_active:
-                return CustomException(
-                    "Account is deactivated, contact admin", 401
-                )
-
-            user_data = UserSerializer(user).data
-            access_token = RefreshToken.for_user(user).access_token
-            user_data["access_token"] = str(access_token)
-            return CustomResponse(user_data, "Logged in successfully", 200)
-        return CustomException(login_serializer.errors, 400)
 
 
 class EmailVerification(APIView):
@@ -193,7 +214,7 @@ class ForgotPassword(APIView):
 
     @swagger_auto_schema(
         operation_summary="Handle forgot password.",
-        responses={200: UserSerializer()},
+        responses={200: ()},
         security=[],
     )
     def post(self, request, email):
@@ -204,9 +225,7 @@ class ForgotPassword(APIView):
             return CustomException("User does not exist!", 404)
 
         user.generate_reset_password_otp()
-        return CustomResponse(
-            {"message": "Reset password OTP sent to your email"}, 200
-        )
+        return CustomResponse({"message": "Reset password OTP sent to your email"}, 200)
 
 
 class ValidateResetOTP(APIView):
@@ -223,9 +242,7 @@ class ValidateResetOTP(APIView):
         serializer = ValidateResetOTPSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data["email"]
-            reset_password_otp = serializer.validated_data[
-                "reset_password_otp"
-            ]
+            reset_password_otp = serializer.validated_data["reset_password_otp"]
 
             user = User.objects.filter(email=email).first()
 
@@ -267,9 +284,7 @@ class ResetPasswordView(APIView):
         """Valildates Reset Password OTP."""
         serializer = ResetPasswordSerializer(data=request.data)
         if serializer.is_valid():
-            reset_password_token = serializer.validated_data[
-                "reset_password_token"
-            ]
+            reset_password_token = serializer.validated_data["reset_password_token"]
             new_password = serializer.validated_data["new_password"]
 
             reset_password = ResetPassword.objects.filter(
@@ -280,9 +295,7 @@ class ResetPasswordView(APIView):
                 return CustomException("Invalid Reset Password Token!", 404)
 
             if reset_password.expiration_time < timezone.now():
-                return CustomException(
-                    "Reset Password Token has expired!", 400
-                )
+                return CustomException("Reset Password Token has expired!", 400)
 
             reset_password.save()
 
@@ -297,11 +310,12 @@ class ResetPasswordView(APIView):
 
 
 class ResendOTP(APIView):
-    """ API Endpoint to Resend a OTP"""
+    """API Endpoint to Resend a OTP"""
+
     @swagger_auto_schema(
         operation_summary="Resends OTP.",
         request_body=ResendOTPSerializer,
-        responses={200: UserSerializer()},
+        responses={200: ()},
         security=[],
     )
     def post(self, request):
@@ -319,50 +333,54 @@ class ResendOTP(APIView):
             if purpose == "verification":
                 user.generate_verification_otp()
                 return CustomResponse(
-                    {"message": "Email Verification OTP sent to your email"}, 200
+                    None,
+                    "Email Verification OTP sent to your email",
+                    200,
                 )
             elif purpose == "reset-password":
                 user.generate_reset_password_otp()
-                return CustomResponse(
-                    {"message": "Reset password OTP sent to your email"}, 200
-                )
+                return CustomResponse("Reset password OTP sent to your email", 200)
             else:
                 return CustomException("Invalid Choice of Purpose", 400)
         return CustomException(serializer.errors, 400)
 
 
-class SuspendUser(APIView):
-    """ API Endpoint to Suspend a User"""
+class ActivateUser(APIView):
+    """API Endpoint to Suspend a User"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
     @swagger_auto_schema(
         operation_summary="Suspend a User.",
         responses={200: UserSerializer()},
-        security=[],
     )
     def post(self, request, user_id: str):
         """Suspend a User."""
         user = User.objects.filter(id=user_id).first()
         if not user:
             return CustomException(f"{user_id} not found", 404)
-        user.is_active = False
+        user.is_suspended = False
         user.save()
         return CustomResponse(
             UserSerializer(user).data, "User suspended successfully", 200
         )
 
 
-class UnsuspendUser(APIView):
-    """ API Endpoint to Unsuspend a User"""
+class DeactivateUser(APIView):
+    """API Endpoint to Unsuspend a User"""
+
+    permission_classes = [permissions.IsAuthenticated]
+
     @swagger_auto_schema(
         operation_summary="Unsuspend a User.",
         responses={200: UserSerializer()},
-        security=[],
     )
     def post(self, request, user_id: str):
         """Unsuspend a User."""
         user = User.objects.filter(id=user_id).first()
         if not user:
             return CustomException(f"{user_id} not found", 404)
-        user.is_active = True
+        user.is_suspended = True
         user.save()
         return CustomResponse(
             UserSerializer(user).data, "User unsuspended successfully", 200

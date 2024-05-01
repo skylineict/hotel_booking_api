@@ -1,0 +1,58 @@
+[
+    {
+        "model": "hotel.facility",
+        "pk": "alwaysopen",
+        "fields": {
+            "label": "Always Open"
+        }
+    },
+    {
+        "model": "hotel.facility",
+        "pk": "conference",
+        "fields": {
+            "label": "Conference"
+        }
+    },
+    {
+        "model": "hotel.facility",
+        "pk": "elevator",
+        "fields": {
+            "label": "Elevator"
+        }
+    },
+    {
+        "model": "hotel.facility",
+        "pk": "gym",
+        "fields": {
+            "label": "Gym"
+        }
+    },
+    {
+        "model": "hotel.facility",
+        "pk": "parking",
+        "fields": {
+            "label": "Parking"
+        }
+    },
+    {
+        "model": "hotel.facility",
+        "pk": "pool",
+        "fields": {
+            "label": "Pool"
+        }
+    },
+    {
+        "model": "hotel.facility",
+        "pk": "restaurant",
+        "fields": {
+            "label": "Restaurant"
+        }
+    },
+    {
+        "model": "hotel.facility",
+        "pk": "wifi",
+        "fields": {
+            "label": "WiFi"
+        }
+    }
+]

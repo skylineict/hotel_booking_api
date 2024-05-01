@@ -2,7 +2,9 @@
 
 from django.urls import path
 from .views import (
+    UserView,
     UserSignup,
+    VendorSignup,
     UserLogin,
     UserUpdate,
     EmailVerification,
@@ -10,12 +12,13 @@ from .views import (
     ValidateResetOTP,
     ResetPasswordView,
     ResendOTP,
-    SuspendUser,
-    UnsuspendUser,
+    ActivateUser,
+    DeactivateUser,
 )
 
 urlpatterns = [
     path("signup", UserSignup.as_view()),
+    path("vendor-signup", VendorSignup.as_view()),
     path("login", UserLogin.as_view()),
     path("update", UserUpdate.as_view()),
     path("verify-email", EmailVerification.as_view()),
@@ -23,8 +26,9 @@ urlpatterns = [
     path("validate-reset-otp", ValidateResetOTP.as_view()),
     path("reset-password", ResetPasswordView.as_view()),
     path("resend-otp", ResendOTP.as_view()),
-    path("suspend", SuspendUser.as_view()),
-    path("unsuspend", UnsuspendUser.as_view()),
+    path("<str:user_id>/suspend", ActivateUser.as_view()),
+    path("<str:user_id>/unsuspend", DeactivateUser.as_view()),
+    path("<str:user_id>", UserView.as_view()),
     # path("resend-otp", ResendOTP.as_view(), name="resend-otp"),
     # path("vendor-signup", vendor_signup, name="vendor-signup"),
     # path(

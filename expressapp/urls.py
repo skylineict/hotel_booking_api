@@ -19,15 +19,16 @@ from django.shortcuts import redirect
 from django.urls import include, path, re_path
 
 from expressapp.swagger import SchemaView
+from image import urls as image_urls
 from hotel import urls as hotel_urls
 from user import urls as user_urls
-from user.views import UserView, UserList
+from user.views import UserList
 
 
 urlpatterns = [
     path("users", UserList.as_view()),
-    path("users/<str:user_id>", UserView.as_view()),
     path("user/", include(user_urls)),
+    path("image/", include(image_urls)),
     path("hotel/", include(hotel_urls)),
     path("swagger", SchemaView.with_ui("swagger"), name="swagger-ui"),
     path("redoc", SchemaView.with_ui("redoc")),

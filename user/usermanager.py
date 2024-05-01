@@ -9,9 +9,7 @@ class Usermanager(BaseUserManager):
     Custom user manager for creating and managing user accounts.
     """
 
-    def create_user(
-        self, email, password, username=None, phone=None, **extra_fields
-    ):
+    def create_user(self, email, password, username=None, phone=None, **extra_fields):
         """
         Creates a new user with the given email, username, phone, and password.
 
@@ -28,16 +26,12 @@ class Usermanager(BaseUserManager):
         if not email:
             raise ValueError(_("The Email field must be set"))
         email = self.normalize_email(email)
-        user = self.model(
-            email=email, username=username, phone=phone, **extra_fields
-        )
+        user = self.model(email=email, username=username, phone=phone, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_vendor(
-        self, email, password, username=None, phone=None, **extra_fields
-    ):
+    def create_vendor(self, email, password, username=None, phone=None, **extra_fields):
         """
         Creates a vendor with the given email, username, phone, and password.
 
@@ -52,6 +46,4 @@ class Usermanager(BaseUserManager):
             Vendor: The created vendor object.
         """
         extra_fields.setdefault("is_vendor", True)
-        return self.create_user(
-            email, password, username, phone, **extra_fields
-        )
+        return self.create_user(email, password, username, phone, **extra_fields)

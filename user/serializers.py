@@ -24,6 +24,7 @@ class UserSerializer(ModelSerializer):
             "is_vendor",
             "email_verified",
             "phone_verified",
+            "is_active",
         ]
         extra_kwargs = {
             "password": {"write_only": True},

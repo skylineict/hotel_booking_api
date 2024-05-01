@@ -6,6 +6,7 @@ from rest_framework import permissions
 
 class CustomOpenAPISchemaGenerator(OpenAPISchemaGenerator):
     """Custom OpenAPI schema generator."""
+
     def get_schema(self, request=None, public=False):
         """Generate a :class:`.Swagger` object with custom tags"""
 
