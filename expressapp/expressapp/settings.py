@@ -14,6 +14,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+from datetime import datetime, timedelta
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,6 +41,15 @@ INSTALLED_APPS = [
     'usersauth',
     'booking',
      'hotels',
+     #third party app
+    'rest_framework',
+    'drf_yasg',
+    'rest_framework_simplejwt'
+    
+   
+   
+   
+  
      
 ]
 
@@ -77,12 +87,45 @@ WSGI_APPLICATION = 'expressapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+  'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'jsexpress1',
+        'USER': 'jsexpress1',
+        'PASSWORD': 'jsexpress1',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'TOKEN_TTL': 60 * 60,  # Token expires in 1 hour
+    'TOKEN_BACKEND': 'rest_framework_simplejwt.backends.TokenBackend',
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=20),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
+
+
 
 
 # Password validation
@@ -126,13 +169,21 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #email settings
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = ''  # Replace with your SMTP host
+# EMAIL_PORT =  465  # Replace with your SMTP port
+# EMAIL_USE_SSL = True
+# # EMAIL_USE_TLS = True  # Use TLS encryption for security
+# EMAIL_HOST_USER = ''  # Replace with your email address
+# EMAIL_HOST_PASSWORD = ''  # Replace with your email password
+
+# Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = ''  # Replace with your SMTP host
-EMAIL_PORT =  465  # Replace with your SMTP port
-EMAIL_USE_SSL = True
-# EMAIL_USE_TLS = True  # Use TLS encryption for security
-EMAIL_HOST_USER = ''  # Replace with your email address
-EMAIL_HOST_PASSWORD = ''  # Replace with your email password
+EMAIL_HOST = 'obidientstechspace.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True 
+EMAIL_HOST_USER = 'dev@obidientstechspace.com'
+EMAIL_HOST_PASSWORD = 'Monoskey@93'
 
 
-AUTH_USER_MODEL = 'usersauth.JsUsermanager' 
+AUTH_USER_MODEL = 'usersauth.User' 

@@ -3,6 +3,8 @@ from usersauth.models import Manager, Customer
 from shortuuid.django_fields  import ShortUUIDField
 from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 class HotelLocation(models.Model):
     hotel_location_id = ShortUUIDField(unique=True, length=8, prefix='hotl', max_length=20, alphabet='hoteloc23', editable=False)
@@ -51,18 +53,32 @@ class Hotel(models.Model):
     images = models.ImageField(upload_to='hotel-images', default='product.jpg')
     date = models.DateTimeField(auto_now_add=True, null=True)
     specifications = models.TextField(max_length=200)
+    num_rooms = models.CharField(max_length=255)
     hotel_status = models.CharField(choices=STATUS_CHOICES, max_length=200, default='in_review')
     features = models.BooleanField(_("features"), default=False)
+    avag_rating = models.FloatField(default=0.0)
+    rating_num =  models.IntegerField(default=0)
+
+
+
  
 
     
     def category_image(self):
         return mark_safe('<img src="%s" width="40" height="40" />'% (self.image.url))
+    #the image of the hotels 
+class HotelImages(models.Model):
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, null=True, related_name='room_images')
+    images = models.ImageField(upload_to='room-images', default='product.jpg')
+    date = models.DateTimeField(auto_now_add=True)
+
 
 class RoomType(models.Model):
     room_id = ShortUUIDField(unique=True, length=8, prefix='room', max_length=20, alphabet='rotre34', editable=False)
     name = models.CharField(max_length=100, unique=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     owner = models.ForeignKey(Manager, verbose_name=_("Managers"), on_delete=models.CASCADE)
+
 
     
 
@@ -80,13 +96,12 @@ class Room(models.Model):
     room_id = ShortUUIDField(unique=True, length=8, prefix='room', max_length=20, alphabet='abcd2020', editable=False)
     room_no = models.IntegerField(unique=True)
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rooms') 
-    type = models.ForeignKey(RoomType, on_delete=models.CASCADE)   
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    type = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='room_type')   
     old_price = models.DecimalField(max_digits=10, decimal_places=2, default=90.93)
     available = models.BooleanField(default=True) 
     available_rooms = models.CharField(max_length=200)
     room_specification = models.TextField()
-    facilities = models.ManyToManyField(Facility, verbose_name=_("facilities"), related_name='rooms')
+    facilities = models.ManyToManyField(Facility, verbose_name=_("facilities"), related_name='facility')
     images = models.ImageField(upload_to='room-images', default='product.jpg')
     date = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -117,13 +132,7 @@ class RoomImages(models.Model):
     def __str__(self):
         return self.room.address
 
-RATING_CHOICES = [
-    (1, '⭐☆☆☆☆'),
-    (2, '⭐⭐☆☆☆'),
-    (3, '⭐⭐⭐☆☆'),
-    (4, '⭐⭐⭐⭐☆'),
-    (5, '⭐⭐⭐⭐⭐'),
-]
+
 
 class HotelReview(models.Model):
     reviewid = ShortUUIDField(unique=True, length=8, prefix='re', max_length=20, alphabet='abcd2020')
@@ -131,7 +140,7 @@ class HotelReview(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, null=True, related_name='hotel_reviews')
     review = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
-    rating = models.IntegerField(choices=RATING_CHOICES, default=1)
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
 
     def __str__(self):
         return self.review
@@ -142,24 +151,4 @@ class HotelReview(models.Model):
     class Meta:
         verbose_name_plural = 'Hotel Reviews'
 
-ORDER_STATUS_CHOICES = (
-    ('cash', 'Cash'),
-    ('online', 'Online'),
-    ('coupon', 'Coupon')
-)
 
-class BookOrder(models.Model):
-    book_id = ShortUUIDField(unique=True, length=8, prefix='hot', max_length=20, alphabet='abcd2020')
-    user = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
-    paid_status = models.BooleanField(default=False)
-    total = models.DecimalField(max_digits=10, decimal_places=2, default=70.90)
-    order_date = models.DateTimeField(auto_now_add=True)
-    book_status = models.CharField(choices=ORDER_STATUS_CHOICES, max_length=200, default='process')
-    invoice_no = models.CharField(max_length=200, default='No2304')
-    
-
-    class Meta:
-        verbose_name_plural = 'Book Orders'
-
-    def __str__(self):
-        return self.book_status

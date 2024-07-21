@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import JsUsermanager, Manager, Customer,ManagerDatail,CustomerProfile
+from .models import User, Manager, Customer,ManagerDatail,CustomerProfile
 
 # Register your models here.
 
@@ -8,7 +8,7 @@ from .models import JsUsermanager, Manager, Customer,ManagerDatail,CustomerProfi
 
 
 
-@admin.register(JsUsermanager)
+@admin.register(User)
 class JsUsermanageradmin(admin.ModelAdmin):
     list_display = ['email', 'username', 'phone', 'is_active', 'is_staff', 'date_joined',]
     
@@ -26,10 +26,11 @@ class ManagerDatailAdmin(admin.ModelAdmin):
 
 @admin.register(Customer)
 class CustomerUser(admin.ModelAdmin):
-    list_display = ['email_verified', 'otp',]
+    list_display = ['last_name','first_name','email','username','phone','email_verified','otp']
+
 
 
 @admin.register(CustomerProfile)
 class CustomerProfileadmin(admin.ModelAdmin):
-    list_display = ['customerprofileid','user','Location','dob','fullname','profile_image',]
+    list_display = ['customerprofileid','user','Location','profile_image',]
 

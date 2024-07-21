@@ -11,15 +11,20 @@ from shortuuid.django_fields  import ShortUUIDField
 from django.utils.safestring import mark_safe
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 # Create your models here.
 #this is a models that handles all the users model 
-class JsUsermanager(AbstractBaseUser):
+class User(AbstractBaseUser):
+    Auth_provider = {'facebook': 'facebook', 'google': 'google',
+                  'twitter': 'twitter', 'email': 'email'}
     email = models.EmailField(_('email address'), unique=True, max_length=200)
     username = models.CharField(_('username'), max_length=150, unique=True, null=True, blank=True)
     phone = models.CharField(_('phone number'),max_length=17, unique=True, null=True, blank=True)
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff status'), default=False)
+    auth_user_provider =  models.CharField(default=Auth_provider.get('email'), max_length=300)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     
     objects =  CustomUsermanager()
@@ -51,11 +56,13 @@ class JsUsermanager(AbstractBaseUser):
     
 
 
-class Manager(JsUsermanager):
+class Manager(User):
     managerid = ShortUUIDField(unique=True, length=8, prefix ='mgt', max_length=20,alphabet='abcd2020')
     is_manager = models.BooleanField(_('manager status'), default=False)
     phone_verified = models.BooleanField(_('phone verified'), default=False)
     otp = models.CharField(_('OTP'), max_length=6, null=True, blank=True)
+    otp_sent_time = models.DateTimeField(null=True, blank=True)
+    is_manager = models.BooleanField(default=False)
 
     def generate_otp(self):
         managercode = "M-"
@@ -65,15 +72,32 @@ class Manager(JsUsermanager):
 
 
 
-class Customer(JsUsermanager):
+class Customer(User):
     customerid = ShortUUIDField(unique=True, length=8, prefix ='cus', max_length=20,alphabet='abcd2020')
     email_verified = models.BooleanField(_('email verified'), default=False)
     otp = models.CharField(_('OTP'), max_length=6, null=True, blank=True)
+    first_name = models.CharField( max_length=200, default='olisa')
+    last_name = models.CharField(max_length=200, default='olisa')
+    dob = models.DateField(auto_now=False, auto_now_add=False)
+    otp_sent_time = models.DateTimeField(null=True, blank=True)
+    is_customer = models.BooleanField(default=False)
 
-    def generate_otp(self):
-        self.otp = get_random_string(length=6, allowed_chars='1234567890')
-        self.save()
+    def is_otp_expired(self): 
+        if not self.otp_sent_time:  # If OTP has not been sent yet
+            return True
+        
+        validity_period = timedelta(minutes=4)  # Assuming OTP is valid for 30 minutes
+        current_time = timezone.now()
+        time_difference = current_time - self.otp_sent_time
+        return time_difference > validity_period
 
+    def __str__(self):
+        return self.last_name
+
+
+    # def generate_otp(self):
+    #     self.otp = get_random_string(length=6, allowed_chars='1234567890')
+    #     self.save()
 
 GENDER_CHOICES = [
         ('M', 'Male'),
@@ -102,6 +126,7 @@ class ManagerDatail(models.Model):
     firstname = models.CharField(max_length=200)
     profile_image = models.ImageField(upload_to='manager_profiles/', null=True, blank=True)
     Company_status =  models.CharField(max_length=200, choices=STATUS)
+    
 
 
     class Meta:
@@ -128,11 +153,9 @@ def create_manager_profile(sender, instance, created, **kwargs):
 class CustomerProfile(models.Model):
     customerprofileid = ShortUUIDField(unique=True, length=8, prefix ='cus', max_length=20,alphabet='abcd2020')
     user = models.OneToOneField(Customer, on_delete=models.CASCADE,related_name='manager')
-    fullname = models.CharField(max_length=300)
     Location = models.CharField(max_length=255)
     country = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
-    dob = models.DateField()
     gender = models.CharField(max_length=200, choices=GENDER_CHOICES)
     profile_image = models.ImageField(upload_to='manager_profiles/', null=True, blank=True)
    
@@ -151,11 +174,11 @@ def create_customer_profile(sender, instance, created, **kwargs):
 
 
 class UserSetting(models.Model):
-    Faceid =  models.BooleanField(default=False)
-    Rememberme  =  models.BooleanField(default=False)
-    Touchid =  models.BooleanField(default=False)
-    logincode =  models.BooleanField(default=False)
+    user = models.ForeignKey(Customer, verbose_name=_(""), on_delete=models.CASCADE)
+    Faceid_enable =  models.BooleanField(default=False)
+    enable_auth_login =  models.BooleanField(default=False)
     notifcation = models.BooleanField(default=False)
+    
 
 
     def __str__(self):
